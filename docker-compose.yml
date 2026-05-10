@@ -1,0 +1,32 @@
+services:
+  worker:
+    build: .
+    image: emailagents:latest
+    container_name: emailagents-worker
+    env_file: .env
+    environment:
+      OUTREACH_DB_PATH: /data/outreach.db
+      TZ: America/New_York
+    volumes:
+      - outreach-data:/data
+    command: ["python", "main.py"]
+    restart: unless-stopped
+
+  dashboard:
+    image: emailagents:latest
+    container_name: emailagents-dashboard
+    depends_on:
+      - worker
+    env_file: .env
+    environment:
+      OUTREACH_DB_PATH: /data/outreach.db
+      TZ: America/New_York
+    volumes:
+      - outreach-data:/data
+    command: ["uvicorn", "dashboard.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+volumes:
+  outreach-data:

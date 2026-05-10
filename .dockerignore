@@ -1,0 +1,15 @@
+.env
+.git
+.gitignore
+__pycache__
+**/__pycache__
+*.pyc
+.venv
+venv
+*.log
+db/outreach.db
+prabhakalyan.json
+prabhasmudhiveti.json
+claude.txt
+Procfile
+.DS_Store

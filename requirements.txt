@@ -1,0 +1,13 @@
+google-api-python-client
+google-auth-oauthlib
+google-auth-httplib2
+google-genai
+fastapi
+uvicorn[standard]
+jinja2
+apscheduler
+beautifulsoup4
+requests
+ddgs
+python-dotenv
+tzdata

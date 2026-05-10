@@ -1,0 +1,15 @@
+.env
+*.db
+
+__pycache__/
+*.pyc
+
+.venv/
+venv/
+
+*.log
+
+# Secret json files
+prabhakalyan.json
+prabhaskgp.json
+prabhasmudhiveti.json

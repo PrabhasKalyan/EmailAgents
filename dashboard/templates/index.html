@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Outreach</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 40px; color: #111; }
+  .row { display: flex; gap: 32px; margin-bottom: 40px; flex-wrap: wrap; }
+  .stat { min-width: 140px; }
+  .stat .num { font-size: 56px; font-weight: 600; }
+  .stat .label { font-size: 13px; text-transform: uppercase; color: #666; letter-spacing: 1px; }
+  table { border-collapse: collapse; width: 100%; max-width: 720px; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+  th { color: #666; font-weight: 500; }
+  a { color: #0a66c2; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h2 { font-size: 14px; text-transform: uppercase; color: #666; letter-spacing: 1px; margin-top: 48px; }
+</style>
+</head>
+<body>
+
+<div class="row">
+  <div class="stat"><div class="num">{{ sent }}</div><div class="label">Sent</div></div>
+  <div class="stat"><div class="num">{{ replied }}</div><div class="label">Replied</div></div>
+  <div class="stat"><div class="num">{{ positive }}</div><div class="label">Positive</div></div>
+  <div class="stat"><div class="num">{{ negative }}</div><div class="label">Negative</div></div>
+  <div class="stat"><div class="num">{{ pending }}</div><div class="label">Pending</div></div>
+</div>
+
+{% if positives %}
+<h2>Positive replies</h2>
+<table>
+  <thead><tr><th>Company</th><th>Received</th><th></th></tr></thead>
+  <tbody>
+  {% for p in positives %}
+    <tr>
+      <td>{{ p.company }}</td>
+      <td>{{ p.at }}</td>
+      <td><a href="{{ p.url }}" target="_blank">open thread</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+</body>
+</html>
