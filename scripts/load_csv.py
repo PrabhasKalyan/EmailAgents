@@ -67,5 +67,9 @@ def load(csv_path):
 
 
 if __name__ == "__main__":
-    path = sys.argv[1] if len(sys.argv) > 1 else "/Users/prabhaskalyan/Downloads/FilteredData - Sheet1 (1).csv"
+    default_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "FilteredData.csv",
+    )
+    path = sys.argv[1] if len(sys.argv) > 1 else default_path
     load(path)

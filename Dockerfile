@@ -10,7 +10,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY config.py main.py ./
+COPY config.py main.py prabhas_context.md FilteredData.csv ./
 COPY db ./db
 COPY modules ./modules
 COPY cron ./cron

@@ -12,52 +12,37 @@ from db.database import save_generated_emails, get_generated_emails, get_company
 from modules.gemini_client import complete_json
 
 
-SYSTEM_PROMPT = """You are writing cold emails on behalf of Prabhas Kalyan, a final-year
-Physics student at IIT Kharagpur (CGPA 8.4) looking for a remote SDE or AI Engineer role
-at US companies.
+CONTEXT_PATH = os.environ.get(
+    "PRABHAS_CONTEXT_PATH",
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                 "prabhas_context.md"),
+)
 
-His background:
-- Built RAG systems with Pinecone, Text-to-SQL models, LLM agents at 4 internships
-- Built AI video generation pipeline (Manim, MoviePy, OpenAI TTS)
-- Built macOS Electron app with on-device LLMs, Ethereum AI agents on AWS
-- Built fault tolerant mechanisms for financial agentic chatbot by finetuning transformer
-  and bringing latency to 10ms and added a hybrid approach of inline memory and memzero
-  + pg vector database for agent session persistence
-- Stack: Python, Go, Node.js, React, Kafka, Docker, Kubernetes, PostgreSQL
+with open(CONTEXT_PATH, encoding="utf-8") as _f:
+    PRABHAS_CONTEXT = _f.read()
 
-Rules for the initial email:
-- Plain text ONLY. No HTML. No bullet points. No formatting.
-- Exactly 3 sentences. Not 2. Not 4.
-- Sentence 1: One specific, genuine observation about their product or company (use the
-  description and news headline provided). This must feel like you actually looked at
-  their site.
-- Sentence 2: One sentence connecting a specific project Prabhas built to their exact work.
-- Sentence 3: Ask for a 15-minute call. Not "any openings". Not "I'd love to join".
-- Never mention CGPA or college unless it's directly relevant.
-- Subject line: 4-6 words, specific to the company, no generic phrases like
-  "exciting opportunity".
 
-Rules for the next-day follow-up (sent 1 day after the initial):
-- 2 sentences only. Plain text.
-- Completely different angle from email 1. Lead with a metric or result from his work.
-- End with the same 15-min call ask.
+SYSTEM_PROMPT = f"""You are writing cold emails on behalf of Prabhas Kalyan.
+Below is his complete background, projects, skills, and the outreach style
+guide he wants you to follow. Treat it as authoritative; never invent
+projects or claims that aren't in it.
 
-Rules for the breakup email (sent 1 day after the follow-up):
-- 2 sentences only.
-- Sentence 1: acknowledge this is the last email.
-- Sentence 2: wish them well with something specific they are building.
-- No ask. Just leave the door open.
+================ PRABHAS CONTEXT (source of truth) ================
+{PRABHAS_CONTEXT}
+================ END CONTEXT ================
 
 Return a JSON object with exactly these keys:
-{
+{{
   "initial_subject": "...",
   "initial_body": "...",
   "day3_subject": "...",
   "day3_body": "...",
   "day6_subject": "...",
   "day6_body": "..."
-}
-Return only the JSON. No explanation. No markdown."""
+}}
+The day3_* slot holds the Day-1 follow-up. The day6_* slot holds the
+Day-2 breakup. Names are kept for backward compatibility with the DB
+schema. Return only the JSON. No explanation. No markdown."""
 
 
 def build_prompt(company):

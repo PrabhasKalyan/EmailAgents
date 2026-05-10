@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DB browser</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 40px; color: #111; }
+  a { color: #0a66c2; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; max-width: 540px; }
+  th, td { text-align: left; padding: 8px 16px; border-bottom: 1px solid #eee; font-size: 14px; }
+  th { color: #666; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+  td.count { text-align: right; font-variant-numeric: tabular-nums; color: #555; }
+  h1 { font-size: 20px; margin-bottom: 24px; }
+  .crumb { font-size: 13px; color: #666; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+  <div class="crumb"><a href="/">← dashboard</a></div>
+  <h1>SQLite — tables</h1>
+  <table>
+    <thead><tr><th>Table</th><th>Rows</th></tr></thead>
+    <tbody>
+      {% for t in tables %}
+      <tr>
+        <td><a href="/db/{{ t.name }}">{{ t.name }}</a></td>
+        <td class="count">{{ t.count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

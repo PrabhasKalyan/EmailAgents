@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ table }} — DB</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 24px; color: #111; }
+  a { color: #0a66c2; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .crumb { font-size: 13px; color: #666; margin-bottom: 16px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .meta { color: #666; font-size: 13px; margin-bottom: 16px; }
+  .tables { font-size: 13px; margin-bottom: 16px; }
+  .tables a { margin-right: 12px; }
+  .tables a.active { color: #111; font-weight: 600; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+  th { background: #fafafa; color: #555; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; position: sticky; top: 0; }
+  td { white-space: pre-wrap; word-break: break-word; max-width: 380px; }
+  .pager { margin: 20px 0; font-size: 13px; }
+  .pager a, .pager span { margin-right: 12px; }
+</style>
+</head>
+<body>
+  <div class="crumb"><a href="/">dashboard</a> · <a href="/db">tables</a></div>
+  <h1>{{ table }}</h1>
+  <div class="meta">{{ total }} rows · page {{ page }} / {{ pages }} · newest first</div>
+  <div class="tables">
+    {% for t in tables %}
+      <a href="/db/{{ t }}" class="{% if t == table %}active{% endif %}">{{ t }}</a>
+    {% endfor %}
+  </div>
+  <table>
+    <thead>
+      <tr>{% for c in columns %}<th>{{ c }}</th>{% endfor %}</tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="pager">
+    {% if page > 1 %}<a href="/db/{{ table }}?page={{ page - 1 }}">← prev</a>{% endif %}
+    <span>page {{ page }} of {{ pages }}</span>
+    {% if page < pages %}<a href="/db/{{ table }}?page={{ page + 1 }}">next →</a>{% endif %}
+  </div>
+</body>
+</html>
