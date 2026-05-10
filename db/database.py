@@ -223,6 +223,17 @@ def _today_est():
     return datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d")
 
 
+def sent_count_today():
+    """Total sends across all Gmail accounts for today (EST). 0 means daily_send has not run yet today."""
+    today = _today_est()
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT COALESCE(SUM(count), 0) AS c FROM account_daily_counts WHERE send_date = ?",
+            (today,),
+        ).fetchone()
+        return row["c"]
+
+
 # ---------- replies ----------
 
 def save_reply(company_id, email_sent_id, reply_from, reply_subject, reply_snippet,
