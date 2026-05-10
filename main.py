@@ -20,6 +20,10 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s :: %(message)s",
 )
+# Silence chatty third-party loggers — every HTTP response and every
+# search-engine fallback was leaking through at INFO.
+for noisy in ("primp", "ddgs", "ddgs.ddgs", "urllib3", "httpx"):
+    logging.getLogger(noisy).setLevel(logging.WARNING)
 
 EST = ZoneInfo("America/New_York")
 
