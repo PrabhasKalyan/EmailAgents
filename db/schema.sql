@@ -43,6 +43,12 @@ CREATE TABLE IF NOT EXISTS follow_ups (
     day6_body TEXT,
     day3_sent_at DATETIME,
     day6_sent_at DATETIME,
+    f1_subject TEXT,  f1_body TEXT,  f1_sent_at DATETIME,
+    f3_subject TEXT,  f3_body TEXT,  f3_sent_at DATETIME,
+    f5_subject TEXT,  f5_body TEXT,  f5_sent_at DATETIME,
+    f7_subject TEXT,  f7_body TEXT,  f7_sent_at DATETIME,
+    f9_subject TEXT,  f9_body TEXT,  f9_sent_at DATETIME,
+    f10_subject TEXT, f10_body TEXT, f10_sent_at DATETIME,
     generated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

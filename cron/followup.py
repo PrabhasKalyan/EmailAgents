@@ -1,4 +1,4 @@
-"""Day 3 / Day 6 follow-ups + Day 7 dead-marker."""
+"""Daily follow-up cron. Sends f1/f3/f5/f7/f9/f10 once each, then marks dead."""
 import os
 import random
 import sys
@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from db.database import (
+    FOLLOWUP_DAYS,
     companies_active_for_followup,
     first_email_for_company,
     get_generated_emails,
@@ -17,6 +18,9 @@ from modules.sender import send_followup
 from config import SEND_DELAY_MIN, SEND_DELAY_MAX
 
 
+DEAD_AFTER_DAYS = max(FOLLOWUP_DAYS) + 1  # 11: one day after the breakup
+
+
 def _days_since(ts_str):
     if not ts_str:
         return None
@@ -24,6 +28,14 @@ def _days_since(ts_str):
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
     return (datetime.now(timezone.utc) - dt).days
+
+
+def _due_day(days, gen):
+    """Largest scheduled follow-up day that's due now and not yet sent."""
+    for d in sorted(FOLLOWUP_DAYS, reverse=True):
+        if days >= d and not gen.get(f"f{d}_sent_at"):
+            return d
+    return None
 
 
 def run():
@@ -38,23 +50,22 @@ def run():
             continue
 
         gen = get_generated_emails(c["id"])
-        if days >= 3:
+        if not gen:
+            continue
+
+        if days >= DEAD_AFTER_DAYS:
             update_company_status(c["id"], "dead")
             print(f"dead: {c['name']} ({days}d, no reply)")
             continue
-        if days >= 2 and gen and not gen.get("day6_sent_at"):
-            try:
-                if send_followup(c["id"], 6):
-                    time.sleep(random.uniform(SEND_DELAY_MIN, SEND_DELAY_MAX))
-            except Exception as e:
-                print(f"breakup failed for {c['name']}: {e}")
+
+        d = _due_day(days, gen)
+        if d is None:
             continue
-        if days >= 1 and gen and not gen.get("day3_sent_at"):
-            try:
-                if send_followup(c["id"], 3):
-                    time.sleep(random.uniform(SEND_DELAY_MIN, SEND_DELAY_MAX))
-            except Exception as e:
-                print(f"followup failed for {c['name']}: {e}")
+        try:
+            if send_followup(c["id"], d):
+                time.sleep(random.uniform(SEND_DELAY_MIN, SEND_DELAY_MAX))
+        except Exception as e:
+            print(f"f{d} failed for {c['name']}: {e}")
 
 
 if __name__ == "__main__":

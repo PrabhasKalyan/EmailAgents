@@ -109,7 +109,7 @@ def send_initial(company_id):
 
 
 def send_followup(company_id, day_number):
-    """day_number = 3 or 6"""
+    """day_number is one of 1, 3, 5, 7, 9, 10."""
     company = get_company(company_id)
     if not company or company.get("status") in ("dead", "replied"):
         return None
@@ -117,10 +117,11 @@ def send_followup(company_id, day_number):
     gen = get_generated_emails(company_id)
     if not gen:
         return None
-    subj = gen.get(f"day{day_number}_subject")
-    body = gen.get(f"day{day_number}_body")
-    if not subj or not body:
+    body = gen.get(f"f{day_number}_body")
+    if not body:
         return None
+    initial_subj = gen.get("initial_subject") or ""
+    subj = initial_subj if initial_subj.lower().startswith("re:") else f"Re: {initial_subj}"
 
     first = first_email_for_company(company_id)
     if not first:

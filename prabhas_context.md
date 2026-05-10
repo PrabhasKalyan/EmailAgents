@@ -63,6 +63,10 @@ tooling, and applied LLM products.
 - Developing LightSpeed, an automated ML model approval and testing
   system integrating AWS S3 to fetch test data and ML model artifacts.
 
+### SDE Intern - Marzi
+- Wokred on Video editing automation tool using a hybrid approach of deeplearning and ai agentic analaysis and using the output to edit videos programatically
+- Built a platform to research,strategise,write and deploy SEO/AEO optimised blogs using several ai agents improving AI visibility of the brand
+
 ## Projects
 
 ### Generative Engine Optimization — Distributed Task Processing
@@ -124,13 +128,31 @@ tooling, and applied LLM products.
 ## Outreach style guide
 
 - Plain text only, never HTML or Markdown formatting in the body.
-- Initial: exactly 3 sentences (specific observation about their
-  product, one specific project of his that maps to their work, ask
-  for a 15-min call).
-- Day-1 follow-up: 2 sentences, lead with a metric or result.
-- Day-2 breakup: 2 sentences, last email, wish them well on something
-  specific.
+- Every email ends with a blank line and the literal word "Prabhas"
+  on its own line. Nothing else after it — no title, no contact info.
+- The intent is always: Prabhas is asking for a remote SDE or AI
+  engineer role (full-time or internship). Make that ask explicit in
+  the initial email and keep the same intent visible across follow-ups.
+- Cadence (7 emails per prospect over 10 days):
+  - Initial (Day 0): 3 sentences — specific observation about their
+    product, one Prabhas project that maps to their work, one-line
+    ask for an SDE / AI engineer role with a 15-min call request.
+  - f1 (Day 1): 2 sentences — soft bump, "wanted to make sure this
+    didn't get lost".
+  - f3 (Day 3): 2 sentences — metric-led, with a DIFFERENT project
+    than the initial.
+  - f5 (Day 5): 2 sentences — angle shift, name a problem the company
+    likely faces and how Prabhas can help.
+  - f7 (Day 7): 2 sentences — direct: "is there a better person on
+    your team to point me to for SDE / AI engineer hiring?"
+  - f9 (Day 9): 2 sentences — last-value email, share a concrete
+    observation or idea about their product, no ask.
+  - f10 (Day 10): 2 sentences — breakup, wish them well, leave the
+    door open.
+- Across the 7 emails for one prospect, do NOT reuse the same project,
+  metric, or opener twice.
 - Subject lines: 4-6 words, specific to the company. No "exciting
-  opportunity" / "quick question".
+  opportunity" / "quick question". Follow-ups are sent as Re: of the
+  initial subject (the sender prepends Re:; generator does not need to).
 - Never mention CGPA or college unless directly relevant to the
   recipient's product (e.g., they're an IIT alum, or building EdTech).

@@ -7,11 +7,19 @@ DB_PATH = os.environ.get("OUTREACH_DB_PATH", os.path.join(os.path.dirname(__file
 SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schema.sql")
 
 
+FOLLOWUP_DAYS = (1, 3, 5, 7, 9, 10)
+
+
 def init_db():
     with open(SCHEMA_PATH) as f:
         schema = f.read()
     with get_conn() as conn:
         conn.executescript(schema)
+        existing = {r["name"] for r in conn.execute("PRAGMA table_info(follow_ups)")}
+        for d in FOLLOWUP_DAYS:
+            for col, typ in ((f"f{d}_subject", "TEXT"), (f"f{d}_body", "TEXT"), (f"f{d}_sent_at", "DATETIME")):
+                if col not in existing:
+                    conn.execute(f"ALTER TABLE follow_ups ADD COLUMN {col} {typ}")
 
 
 @contextmanager
@@ -122,18 +130,17 @@ def domain_emailed_today(domain):
 # ---------- follow_ups (the generator's storage) ----------
 
 def save_generated_emails(company_id, payload):
+    cols = ["company_id", "initial_subject", "initial_body"]
+    vals = [company_id, payload["initial_subject"], payload["initial_body"]]
+    for d in FOLLOWUP_DAYS:
+        cols += [f"f{d}_subject", f"f{d}_body"]
+        vals += [payload[f"f{d}_subject"], payload[f"f{d}_body"]]
+    cols.append("generated_at")
+    placeholders = ", ".join(["?"] * len(vals)) + ", CURRENT_TIMESTAMP"
     with get_conn() as conn:
         conn.execute(
-            """INSERT OR REPLACE INTO follow_ups
-               (company_id, initial_subject, initial_body,
-                day3_subject, day3_body, day6_subject, day6_body, generated_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
-            (
-                company_id,
-                payload["initial_subject"], payload["initial_body"],
-                payload["day3_subject"], payload["day3_body"],
-                payload["day6_subject"], payload["day6_body"],
-            ),
+            f"INSERT OR REPLACE INTO follow_ups ({', '.join(cols)}) VALUES ({placeholders})",
+            vals,
         )
 
 
@@ -146,10 +153,11 @@ def get_generated_emails(company_id):
 
 
 def mark_followup_sent(company_id, day_number):
-    col = "day3_sent_at" if day_number == 3 else "day6_sent_at"
+    if day_number not in FOLLOWUP_DAYS:
+        raise ValueError(f"unknown follow-up day: {day_number}")
     with get_conn() as conn:
         conn.execute(
-            f"UPDATE follow_ups SET {col} = CURRENT_TIMESTAMP WHERE company_id = ?",
+            f"UPDATE follow_ups SET f{day_number}_sent_at = CURRENT_TIMESTAMP WHERE company_id = ?",
             (company_id,),
         )
 
