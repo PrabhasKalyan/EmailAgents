@@ -12,7 +12,12 @@ from apscheduler.triggers.interval import IntervalTrigger
 from cron.daily_send import run as daily_send
 from cron.followup import run as followup
 from cron.reply_check import run_once as reply_check_once
-from config import SEND_WINDOW_START_HOUR_EST, SEND_WINDOW_END_HOUR_EST
+from config import (
+    GMAIL_ACCOUNTS,
+    PER_ACCOUNT_DAILY_LIMIT,
+    SEND_WINDOW_START_HOUR_EST,
+    SEND_WINDOW_END_HOUR_EST,
+)
 from db.database import init_db, sent_count_today
 
 
@@ -29,15 +34,22 @@ EST = ZoneInfo("America/New_York")
 
 
 def _catchup():
-    """Run daily_send + followup once on startup IF inside send window and nothing sent today."""
+    """Run daily_send + followup on startup IF inside send window AND today's
+    send count is below the daily cap. Resumes a mid-batch crash instead of
+    stranding the rest of the day until tomorrow's 9:00 EST cron."""
     now = datetime.now(EST)
     if not (SEND_WINDOW_START_HOUR_EST <= now.hour < SEND_WINDOW_END_HOUR_EST):
         print(f"Catch-up skipped: {now.strftime('%H:%M')} EST is outside send window.")
         return
-    if sent_count_today() > 0:
-        print(f"Catch-up skipped: {sent_count_today()} sends already logged for today.")
+    daily_cap = max(1, len(GMAIL_ACCOUNTS)) * PER_ACCOUNT_DAILY_LIMIT
+    sent_today = sent_count_today()
+    if sent_today >= daily_cap:
+        print(f"Catch-up skipped: daily cap reached ({sent_today}/{daily_cap}).")
         return
-    print(f"Catch-up: starting at {now.strftime('%H:%M')} EST, running daily_send + followup now.")
+    if sent_today > 0:
+        print(f"Catch-up: resuming partial day ({sent_today}/{daily_cap} already sent).")
+    else:
+        print(f"Catch-up: starting at {now.strftime('%H:%M')} EST, running daily_send + followup now.")
     try:
         daily_send()
     except Exception as e:
