@@ -6,7 +6,7 @@ services:
     env_file: .env
     environment:
       OUTREACH_DB_PATH: /data/outreach.db
-      TZ: Asia/Kolkata
+      TZ: America/New_York
     volumes:
       - outreach-data:/data
     command: ["python", "main.py"]
@@ -20,7 +20,7 @@ services:
     env_file: .env
     environment:
       OUTREACH_DB_PATH: /data/outreach.db
-      TZ: Asia/Kolkata
+      TZ: America/New_York
     volumes:
       - outreach-data:/data
     command: ["uvicorn", "dashboard.app:app", "--host", "0.0.0.0", "--port", "8000"]
